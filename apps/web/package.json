@@ -1,0 +1,13 @@
+{
+  "name": "@smartnotes/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SmartNotes frontend (Next.js + Tailwind) - to be implemented in Phase 3",
+  "scripts": {
+    "dev": "echo \"[web] placeholder - Next.js setup coming in Phase 3\"",
+    "build": "echo \"[web] placeholder build - no-op\"",
+    "lint": "echo \"[web] placeholder lint - no-op\"",
+    "test": "echo \"[web] placeholder test - no-op\"",
+    "typecheck": "echo \"[web] placeholder typecheck - no-op\""
+  }
+}

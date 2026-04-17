@@ -1,0 +1,13 @@
+{
+  "name": "@smartnotes/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SmartNotes backend API (NestJS + Prisma + PostgreSQL) - to be implemented in Phase 2",
+  "scripts": {
+    "dev": "echo \"[api] placeholder - NestJS setup coming in Phase 2\"",
+    "build": "echo \"[api] placeholder build - no-op\"",
+    "lint": "echo \"[api] placeholder lint - no-op\"",
+    "test": "echo \"[api] placeholder test - no-op\"",
+    "typecheck": "echo \"[api] placeholder typecheck - no-op\""
+  }
+}
