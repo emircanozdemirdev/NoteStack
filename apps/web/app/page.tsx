@@ -53,6 +53,16 @@ export default function HomePage() {
           </p>
         </article>
       </section>
+
+      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-900">
+          API Client Ready
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Configure <code>NEXT_PUBLIC_API_URL</code> in <code>.env.local</code>{' '}
+          to connect this web app to the backend API.
+        </p>
+      </section>
     </main>
   );
 }
