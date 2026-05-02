@@ -3,6 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import type { StringValue } from 'ms';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
@@ -18,7 +20,8 @@ import { JwtStrategy } from './jwt.strategy';
       }),
     }),
   ],
-  providers: [JwtStrategy],
-  exports: [JwtModule, JwtStrategy],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [JwtModule, JwtStrategy, AuthService],
 })
 export class AuthModule {}
