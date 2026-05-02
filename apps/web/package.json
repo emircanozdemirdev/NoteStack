@@ -2,12 +2,26 @@
   "name": "@smartnotes/web",
   "version": "0.1.0",
   "private": true,
-  "description": "SmartNotes frontend (Next.js + Tailwind) - to be implemented in Phase 3",
+  "description": "SmartNotes frontend (Next.js App Router + TypeScript)",
   "scripts": {
-    "dev": "echo \"[web] placeholder - Next.js setup coming in Phase 3\"",
-    "build": "echo \"[web] placeholder build - no-op\"",
-    "lint": "echo \"[web] placeholder lint - no-op\"",
-    "test": "echo \"[web] placeholder test - no-op\"",
-    "typecheck": "echo \"[web] placeholder typecheck - no-op\""
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.4.7",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.2"
   }
 }
