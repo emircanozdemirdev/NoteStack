@@ -33,4 +33,19 @@ export async function getHealthStatus(): Promise<{ status: string }> {
   return fetchJson<{ status: string }>('/health');
 }
 
+export type AuthTokensResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+export async function loginWithCredentials(
+  email: string,
+  password: string,
+): Promise<AuthTokensResponse> {
+  return fetchJson<AuthTokensResponse>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
 export { API_BASE_URL };
