@@ -48,4 +48,14 @@ export async function loginWithCredentials(
   });
 }
 
+export async function registerWithCredentials(
+  email: string,
+  password: string,
+): Promise<AuthTokensResponse> {
+  return fetchJson<AuthTokensResponse>('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
 export { API_BASE_URL };
