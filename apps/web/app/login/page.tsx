@@ -1,29 +1,48 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, type FormEvent } from 'react';
-import { loginWithCredentials } from '../../src/lib/api';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState, type FormEvent } from 'react';
+import { useAuth } from '../../src/context/auth-context';
 
-export default function LoginPage() {
+function LoginForm() {
+  const { login, user, loading } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+
+  const redirectTarget = searchParams.get('from') || '/account';
+
+  useEffect(() => {
+    if (loading) return;
+    if (user) {
+      router.replace(redirectTarget);
+    }
+  }, [user, loading, router, redirectTarget]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setSuccess(false);
     setSubmitting(true);
     try {
-      await loginWithCredentials(email.trim(), password);
-      setSuccess(true);
+      await login(email.trim(), password);
+      router.replace(redirectTarget);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign in failed.');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (loading || user) {
+    return (
+      <main className="mx-auto w-full max-w-md px-5 py-16 text-center text-sm text-slate-600">
+        Loading…
+      </main>
+    );
   }
 
   return (
@@ -88,16 +107,6 @@ export default function LoginPage() {
             </p>
           ) : null}
 
-          {success ? (
-            <p
-              className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
-              role="status"
-            >
-              Signed in successfully. Session storage and protected routes
-              will be wired in the next steps.
-            </p>
-          ) : null}
-
           <button
             type="submit"
             disabled={submitting}
@@ -126,5 +135,19 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto w-full max-w-md px-5 py-16 text-center text-sm text-slate-600">
+          Loading…
+        </main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

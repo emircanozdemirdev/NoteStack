@@ -1,30 +1,45 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, type FormEvent } from 'react';
-import { registerWithCredentials } from '../../src/lib/api';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, type FormEvent } from 'react';
+import { useAuth } from '../../src/context/auth-context';
 
 export default function RegisterPage() {
+  const { register, user, loading } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (loading) return;
+    if (user) {
+      router.replace('/account');
+    }
+  }, [user, loading, router]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setSuccess(false);
     setSubmitting(true);
     try {
-      await registerWithCredentials(email.trim(), password);
-      setSuccess(true);
-      setPassword('');
+      await register(email.trim(), password);
+      router.replace('/account');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed.');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (loading || user) {
+    return (
+      <main className="mx-auto w-full max-w-md px-5 py-16 text-center text-sm text-slate-600">
+        Loading…
+      </main>
+    );
   }
 
   return (
@@ -87,15 +102,6 @@ export default function RegisterPage() {
               role="alert"
             >
               {error}
-            </p>
-          ) : null}
-
-          {success ? (
-            <p
-              className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
-              role="status"
-            >
-              Account created successfully. You can sign in now.
             </p>
           ) : null}
 
