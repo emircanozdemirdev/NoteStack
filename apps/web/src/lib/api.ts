@@ -13,7 +13,9 @@ export async function fetchJson<T>(
   const response = await fetch(`${API_BASE_URL}${normalizedPath}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(options.body !== undefined && options.body !== null
+        ? { 'Content-Type': 'application/json' }
+        : {}),
       ...(options.headers ?? {}),
     },
     cache: options.cache ?? 'no-store',
@@ -31,6 +33,67 @@ export async function fetchJson<T>(
 
 export async function getHealthStatus(): Promise<{ status: string }> {
   return fetchJson<{ status: string }>('/health');
+}
+
+export type AuthTokensResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+export async function loginWithCredentials(
+  email: string,
+  password: string,
+): Promise<AuthTokensResponse> {
+  return fetchJson<AuthTokensResponse>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function registerWithCredentials(
+  email: string,
+  password: string,
+): Promise<AuthTokensResponse> {
+  return fetchJson<AuthTokensResponse>('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export type AuthMeResponse = {
+  id: string;
+  email: string;
+};
+
+export async function getCurrentUser(accessToken: string): Promise<AuthMeResponse> {
+  return fetchJson<AuthMeResponse>('/auth/me', {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function refreshAccessToken(
+  refreshToken: string,
+): Promise<{ accessToken: string }> {
+  return fetchJson<{ accessToken: string }>('/auth/refresh', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+  });
+}
+
+/** Authenticated JSON request; injects Bearer token. */
+export async function fetchJsonAuthenticated<T>(
+  path: string,
+  accessToken: string,
+  options: FetchJsonOptions = {},
+): Promise<T> {
+  return fetchJson<T>(path, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 }
 
 export { API_BASE_URL };
