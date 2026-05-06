@@ -22,6 +22,11 @@ export function setStoredTokens(accessToken: string, refreshToken: string): void
   sessionStorage.setItem(REFRESH_KEY, refreshToken);
 }
 
+export function setStoredAccessToken(accessToken: string): void {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem(ACCESS_KEY, accessToken);
+}
+
 export function clearStoredTokens(): void {
   if (typeof window === 'undefined') return;
   sessionStorage.removeItem(ACCESS_KEY);

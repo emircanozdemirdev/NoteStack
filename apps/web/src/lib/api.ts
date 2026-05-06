@@ -72,6 +72,15 @@ export async function getCurrentUser(accessToken: string): Promise<AuthMeRespons
   });
 }
 
+export async function refreshAccessToken(
+  refreshToken: string,
+): Promise<{ accessToken: string }> {
+  return fetchJson<{ accessToken: string }>('/auth/refresh', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+  });
+}
+
 /** Authenticated JSON request; injects Bearer token. */
 export async function fetchJsonAuthenticated<T>(
   path: string,

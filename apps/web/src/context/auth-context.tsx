@@ -13,11 +13,14 @@ import type { AuthMeResponse } from '../lib/api';
 import {
   getCurrentUser,
   loginWithCredentials,
+  refreshAccessToken,
   registerWithCredentials,
 } from '../lib/api';
 import {
   clearStoredTokens,
   getStoredAccessToken,
+  getStoredRefreshToken,
+  setStoredAccessToken,
   setStoredTokens,
 } from '../lib/auth-storage';
 
@@ -37,14 +40,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const bootstrap = useCallback(async () => {
     const access = getStoredAccessToken();
-    if (!access) {
+    const refresh = getStoredRefreshToken();
+
+    if (!access && !refresh) {
       setUser(null);
       setLoading(false);
       return;
     }
-    try {
-      const me = await getCurrentUser(access);
+
+    const loadUser = async (accessToken: string) => {
+      const me = await getCurrentUser(accessToken);
       setUser(me);
+    };
+
+    try {
+      if (access) {
+        try {
+          await loadUser(access);
+          return;
+        } catch {
+          // Access token may be expired; try refresh if available.
+        }
+      }
+
+      if (!refresh) {
+        clearStoredTokens();
+        setUser(null);
+        return;
+      }
+
+      const { accessToken: newAccess } = await refreshAccessToken(refresh);
+      setStoredAccessToken(newAccess);
+      await loadUser(newAccess);
     } catch {
       clearStoredTokens();
       setUser(null);
