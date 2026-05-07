@@ -21,6 +21,12 @@ export function AppHeader() {
           ) : user ? (
             <>
               <Link
+                href="/notes"
+                className="font-medium text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline"
+              >
+                Notes
+              </Link>
+              <Link
                 href="/account"
                 className="font-medium text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline"
               >

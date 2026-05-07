@@ -81,6 +81,20 @@ export async function refreshAccessToken(
   });
 }
 
+export type NoteItem = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function listNotes(accessToken: string): Promise<NoteItem[]> {
+  return fetchJsonAuthenticated<NoteItem[]>('/notes', accessToken, {
+    method: 'GET',
+  });
+}
+
 /** Authenticated JSON request; injects Bearer token. */
 export async function fetchJsonAuthenticated<T>(
   path: string,
