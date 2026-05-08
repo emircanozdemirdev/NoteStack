@@ -61,9 +61,17 @@ function NotesContent() {
             Your notes
           </h1>
         </div>
-        <span className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700">
-          {notes.length} item{notes.length === 1 ? '' : 's'}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700">
+            {notes.length} item{notes.length === 1 ? '' : 's'}
+          </span>
+          <Link
+            href="/notes/new"
+            className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800"
+          >
+            New note
+          </Link>
+        </div>
       </div>
 
       {fetching ? (
@@ -97,7 +105,14 @@ function NotesContent() {
               key={note.id}
               className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
             >
-              <h2 className="text-base font-semibold text-slate-900">{note.title}</h2>
+              <h2 className="text-base font-semibold text-slate-900">
+                <Link
+                  href={`/notes/${note.id}`}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {note.title}
+                </Link>
+              </h2>
               <p className="mt-2 line-clamp-3 text-sm text-slate-600">{note.content}</p>
               <p className="mt-3 text-xs text-slate-500">
                 Updated {new Date(note.updatedAt).toLocaleString()}

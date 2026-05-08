@@ -95,6 +95,33 @@ export async function listNotes(accessToken: string): Promise<NoteItem[]> {
   });
 }
 
+export async function getNote(accessToken: string, noteId: string): Promise<NoteItem> {
+  return fetchJsonAuthenticated<NoteItem>(`/notes/${noteId}`, accessToken, {
+    method: 'GET',
+  });
+}
+
+export async function createNote(
+  accessToken: string,
+  input: { title: string; content: string },
+): Promise<NoteItem> {
+  return fetchJsonAuthenticated<NoteItem>('/notes', accessToken, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateNote(
+  accessToken: string,
+  noteId: string,
+  input: { title: string; content: string },
+): Promise<NoteItem> {
+  return fetchJsonAuthenticated<NoteItem>(`/notes/${noteId}`, accessToken, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
 /** Authenticated JSON request; injects Bearer token. */
 export async function fetchJsonAuthenticated<T>(
   path: string,
