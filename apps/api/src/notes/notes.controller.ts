@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -24,6 +26,7 @@ export class NotesController {
   constructor(private readonly notes: NotesService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Req() req: Request & { user: AuthUser }, @Body() dto: CreateNoteDto) {
     return this.notes.create(req.user.userId, dto);
   }
