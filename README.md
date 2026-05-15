@@ -1,75 +1,89 @@
-# SmartNotes Fullstack
+# SmartNotes
 
-A personal notes application built as a full-stack portfolio project.
-Monorepo managed with **pnpm workspaces**.
+Personal notes app built as a full-stack portfolio project. Monorepo with **pnpm workspaces**: NestJS API, Next.js web, PostgreSQL, JWT auth, and user-scoped notes CRUD.
 
-## Tech Stack
+## Features
+
+- **Auth** — Register, login, refresh tokens, protected `/auth/me`
+- **Notes** — Create, list, read, update, delete (scoped per user)
+- **Web** — Landing, login/register, notes list, create/edit, account
+- **Quality** — API unit + e2e tests, GitHub Actions CI
+
+## Tech stack
 
 | Layer    | Technology                                         |
 | -------- | -------------------------------------------------- |
 | Backend  | Node.js 20, TypeScript, NestJS, Prisma, PostgreSQL |
-| Frontend | Next.js (App Router), TypeScript, Tailwind CSS     |
-| Tooling  | pnpm workspaces, ESLint (flat), Prettier           |
-| Auth     | JWT-based (planned, Phase 4)                       |
+| Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS  |
+| Tooling  | pnpm workspaces, ESLint, Prettier, GitHub Actions  |
+| Auth     | JWT (access + refresh), Passport, bcrypt           |
 
-## Repository Layout
+## Quick start
+
+Prerequisites: **Node 20**, **pnpm 9+**, **Docker** (for PostgreSQL).
+
+```bash
+git clone <your-repo-url> NoteStack
+cd NoteStack
+corepack enable
+pnpm install
+docker compose up -d
+cp apps/api/.env.example apps/api/.env    # Windows: Copy-Item ...
+cp apps/web/.env.example apps/web/.env.local
+pnpm --filter @smartnotes/api exec prisma migrate deploy
+pnpm dev
+```
+
+- Web: http://localhost:3000  
+- API: http://localhost:3001/api  
+- Health: http://localhost:3001/api/health  
+
+Full setup, env vars, and troubleshooting: **[docs/SETUP.md](docs/SETUP.md)**.
+
+## Repository layout
 
 ```
 NoteStack/
 ├── apps/
-│   ├── api/    # NestJS backend (filled in Phase 2)
-│   └── web/    # Next.js frontend (filled in Phase 3)
-├── package.json           # root, private, workspace scripts
-├── pnpm-workspace.yaml    # workspaces: apps/*
-├── tsconfig.base.json     # shared TypeScript config
-├── eslint.config.mjs      # shared ESLint flat config
-├── .prettierrc            # shared Prettier rules
-├── .editorconfig
-├── .nvmrc                 # Node 20 LTS
-└── .gitignore
+│   ├── api/          # NestJS + Prisma
+│   └── web/          # Next.js App Router
+├── docs/
+│   └── SETUP.md      # Local development guide
+├── .github/workflows/ci.yml
+├── docker-compose.yml
+├── package.json
+└── pnpm-workspace.yaml
 ```
 
-## Prerequisites
+## Scripts (root)
 
-- [Node.js](https://nodejs.org/) 20 LTS (`.nvmrc` pins the version)
-- [pnpm](https://pnpm.io/) 9+ (enable via `corepack enable`)
+| Command        | Description                          |
+| -------------- | ------------------------------------ |
+| `pnpm dev`     | Run API + web in parallel            |
+| `pnpm dev:api` | API only (port 3001)                 |
+| `pnpm dev:web` | Web only (port 3000)                 |
+| `pnpm build`   | Build all workspaces                 |
+| `pnpm lint`    | Lint API + web                       |
+| `pnpm test`    | Run tests (API unit; web has none)   |
+| `pnpm typecheck` | TypeScript check across workspaces |
 
-## Getting Started
+API-only: `pnpm --filter @smartnotes/api run test:e2e` (requires Postgres).
 
-```bash
-# 1. Clone and enter the repo
-git clone <your-repo-url> NoteStack
-cd NoteStack
+## API overview
 
-# 2. Enable pnpm (one-time, via Node's corepack)
-corepack enable
+| Method | Path              | Auth   | Description        |
+| ------ | ----------------- | ------ | ------------------ |
+| GET    | `/api/health`     | No     | Health check       |
+| POST   | `/api/auth/register` | No  | Register           |
+| POST   | `/api/auth/login` | No     | Login              |
+| POST   | `/api/auth/refresh` | No   | Refresh access token |
+| GET    | `/api/auth/me`    | Bearer | Current user       |
+| GET/POST | `/api/notes`    | Bearer | List / create      |
+| GET/PATCH/DELETE | `/api/notes/:id` | Bearer | CRUD one note |
 
-# 3. Install all dependencies for all workspaces
-pnpm install
+## CI
 
-# 4. Run all workspace dev scripts in parallel
-pnpm dev
-
-# Other useful commands
-pnpm build        # build all apps
-pnpm lint         # lint all apps
-pnpm test         # run tests in all apps
-pnpm typecheck    # TS typecheck across workspaces
-pnpm dev:api      # run only api workspace
-pnpm dev:web      # run only web workspace
-pnpm format       # auto-format with Prettier
-```
-
-## Development Phases
-
-| Phase | Scope                                             |
-| ----- | ------------------------------------------------- |
-| 1     | Monorepo scaffold (pnpm workspaces) — **current** |
-| 2     | NestJS API + Prisma schema + PostgreSQL           |
-| 3     | Next.js app + Tailwind + base UI                  |
-| 4     | JWT authentication (register/login/refresh)       |
-| 5     | Notes CRUD feature end-to-end                     |
-| 6     | Tests (unit + e2e) and deployment hardening       |
+On push/PR to `main`, GitHub Actions runs: install → Prisma migrate → build → API unit tests → API e2e (Postgres service).
 
 ## License
 
